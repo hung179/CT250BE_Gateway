@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis/redis.service'; // Sử dụng RedisService đã cấu hình
+import { RedisService } from '../redisCache/redis.service'; // Sử dụng RedisService đã cấu hình
 import * as crypto from 'crypto'; // Để tạo OTP ngẫu nhiên
 
 @Injectable()
