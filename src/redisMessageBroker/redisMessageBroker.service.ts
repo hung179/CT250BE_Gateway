@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
 @Injectable()
-export class RedisService {
+export class RedisMessageBrokerService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: ClientProxy
   ) {}
@@ -16,7 +16,7 @@ export class RedisService {
   // 🔥 Gửi request và chờ phản hồi (Request-Response)
   async requestResponse<T>(
     channel: string,
-    message: any
+    message?: any
   ): Promise<{ success: boolean; data?: T; error?: string }> {
     return lastValueFrom(this.redisClient.send(channel, message));
   }

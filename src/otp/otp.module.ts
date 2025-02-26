@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { OtpService } from './otp.service';
-import { RedisModule } from '../redisCache/redis.module'; // RedisModule đã cấu hình từ trước
+import { RedisCacheModule } from '../redisCache/redisCache.module'; // RedisModule đã cấu hình từ trước
 
 @Module({
-  imports: [RedisModule],
+  imports: [RedisCacheModule],
   providers: [OtpService],
   controllers: [],
   exports: [OtpService],

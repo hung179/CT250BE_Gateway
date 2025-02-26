@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class AdminOnlyGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    if (!request.user || request.user.role !== 'admin') {
-      throw new ForbiddenException('Access restricted to admin only');
+    if (!request.user || !request.user.role) {
+      throw new ForbiddenException('Access restricted to admin users');
     }
     return true;
   }

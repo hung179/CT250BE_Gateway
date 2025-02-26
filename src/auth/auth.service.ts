@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RedisService } from '../redisCache/redis.service'; // Redis để lưu refresh token
+import { RedisCacheService } from '../redisCache/redisCache.service'; // Redis để lưu refresh token
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -9,16 +9,15 @@ import { ConfigService } from '@nestjs/config';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private redisService: RedisService,
+    private redisCacheService: RedisCacheService,
     private configService: ConfigService
   ) {}
 
   // Đăng nhập và tạo accessToken + refreshToken
   async login(user: any, userType: 'admin' | 'customer') {
     const payload = { userId: user._id };
-    console.log('login', user);
     if (userType === 'admin') {
-      payload['role'] = user.role; // Chỉ admin có role
+      payload['role'] = user.role;
     }
 
     const accessToken = this.jwtService.sign(payload, {
@@ -31,7 +30,7 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    await this.redisService.set(
+    await this.redisCacheService.set(
       `refresh_token:${user._id}`,
       refreshToken,
       7 * 24 * 60 * 60
@@ -91,7 +90,7 @@ export class AuthService {
 
       // 🛠 Kiểm tra refreshToken trong Redis
       const tokenKey = `refresh_token:${userId}:${refreshToken}`;
-      const isValid = await this.redisService.get(tokenKey);
+      const isValid = await this.redisCacheService.get(tokenKey);
       if (!isValid) {
         throw new UnauthorizedException('Invalid refresh token');
       }
@@ -113,10 +112,10 @@ export class AuthService {
 
   async logout(userId: string, accessToken: string, refreshToken: string) {
     const tokenKey = `refresh_token:${userId}:${refreshToken}`;
-    await this.redisService.del(tokenKey);
+    await this.redisCacheService.del(tokenKey);
 
     const accessTokenExpireTime = 60 * 60; // 1 giờ (hoặc thời gian hết hạn của token)
-    await this.redisService.set(
+    await this.redisCacheService.set(
       `blacklist_token:${accessToken}`,
       'blacklisted',
       accessTokenExpireTime

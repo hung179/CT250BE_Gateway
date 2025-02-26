@@ -45,10 +45,4 @@ export class AuthController {
       refreshTokenDto.refreshToken
     );
   }
-
-  @Get('admin-only')
-  @UseGuards(JwtAuthGuard, AdminOnlyGuard)
-  adminOnly(@Req() req) {
-    return { message: 'Welcome Admin', user: req.user };
-  }
 }

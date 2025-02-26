@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AdminLocalStrategy } from './strategies/admin-local.strategy';
 import { CustomerLocalStrategy } from './strategies/customer-local.strategy';
-import { RedisModule } from 'src/redisCache/redis.module';
+import { RedisModule } from 'src/redisCache/redisCache.module';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
