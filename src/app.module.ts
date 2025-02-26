@@ -6,10 +6,8 @@ import { OrderModule } from './microservices/order/order.module';
 import { CustomerModule } from './microservices/customer/customer.module';
 import { AdminModule } from './microservices/admin/admin.module';
 import { CategoryModule } from './microservices/category/category.module';
-import { PromotionController } from './microservices/promotion/promotion.controller';
-import { PromotionModule } from './microservices/promotion/promotion.module';
-import { BillPromotionModule } from './microservices/promotion/bill.promotion/bill.promotion.module';
 import { ProductPromotionModule } from './microservices/promotion/product.promotion/product.promotion.module';
+import { BillPromotionModule } from './microservices/promotion/bill.promotion/bill.promotion.module';
 
 @Module({
   imports: [
@@ -20,11 +18,10 @@ import { ProductPromotionModule } from './microservices/promotion/product.promot
     CustomerModule,
     AdminModule,
     CategoryModule,
-    PromotionModule,
-    BillPromotionModule,
     ProductPromotionModule,
+    BillPromotionModule,
   ],
-  controllers: [PromotionController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}
