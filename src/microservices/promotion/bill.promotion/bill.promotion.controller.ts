@@ -6,11 +6,15 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { MaGiamDTO } from './bill.promotion.dto';
 import { BillPromotionService } from './bill.promotion.service';
+import { AdminGuard } from 'src/auth/guards/admin-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('bill-promotion')
+@UseGuards(JwtAuthGuard)
 export class BillPromotionController {
   constructor(private readonly billPromotionService: BillPromotionService) {}
 
@@ -29,6 +33,7 @@ export class BillPromotionController {
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   async create(@Body() dto: MaGiamDTO): Promise<{
     success: boolean;
     data?: any;
@@ -38,6 +43,7 @@ export class BillPromotionController {
   }
 
   @Put(':id')
+  @UseGuards(AdminGuard)
   async update(
     @Param('id') id: string,
     @Body() dto: Partial<MaGiamDTO>
@@ -50,6 +56,7 @@ export class BillPromotionController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async delete(@Param('id') id: string): Promise<{
     success: boolean;
     data?: any;

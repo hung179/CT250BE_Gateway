@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateKhuyenMaiDto,
@@ -14,6 +15,8 @@ import {
   UpdateChiTietKhuyenMaiDto,
 } from './product.promotion.dto';
 import { ProductPromotionService } from './product.promotion.service';
+import { AdminGuard } from 'src/auth/guards/admin-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('product-promotion')
 export class ProductPromotionController {
@@ -23,6 +26,7 @@ export class ProductPromotionController {
 
   // Tạo khuyến mãi
   @Post()
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async createKhuyenMai(
     @Body('khuyenMai') khuyenMaiDto: CreateKhuyenMaiDto,
     @Body('chiTietKhuyenMai') chiTietKhuyenMaiDto: CreateChiTietKhuyenMaiDto[]
@@ -35,6 +39,7 @@ export class ProductPromotionController {
 
   // Cập nhật khuyến mãi theo ID
   @Put(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async update(
     @Param('id') id: string,
     @Body('khuyenMai') khuyenMaiDto: UpdateKhuyenMaiDto,
@@ -49,6 +54,7 @@ export class ProductPromotionController {
 
   // Xóa khuyến mãi theo ID
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async delete(@Param('id') idKhuyenMai: string) {
     return this.productPromotionService.delete(idKhuyenMai);
   }

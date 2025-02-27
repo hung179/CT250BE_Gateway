@@ -7,11 +7,15 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateHoaDonDto } from './order.dto';
+import { AdminGuard } from 'src/auth/guards/admin-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('order')
+@UseGuards(JwtAuthGuard)
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
   @Post()
@@ -26,6 +30,7 @@ export class OrderController {
     return this.orderService.updateState(idSanPham, state);
   }
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async cancelOrder(@Param('id') idSanPham: string) {
     return this.orderService.confirmCancel(idSanPham);
   }
