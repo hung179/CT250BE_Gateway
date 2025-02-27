@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
         const redis = new Redis({
           host: configService.get<string>('REDIS_HOST'),
           port: configService.get<number>('REDIS_PORT'),
+          db: 0,
         });
         return redis;
       },

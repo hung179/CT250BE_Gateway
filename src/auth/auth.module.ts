@@ -6,8 +6,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AdminLocalStrategy } from './strategies/admin-local.strategy';
 import { CustomerLocalStrategy } from './strategies/customer-local.strategy';
-import { RedisModule } from 'src/redisCache/redisCache.module';
+import { RedisCacheModule } from 'src/redisCache/redisCache.module';
 import { ConfigService } from '@nestjs/config';
+import { AdminGuard } from './guards/admin-guard';
+import { AdminOnlyGuard } from './guards/admin-only.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -19,7 +22,7 @@ import { ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: '1h' },
       }),
     }),
-    RedisModule,
+    RedisCacheModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -27,7 +30,10 @@ import { ConfigService } from '@nestjs/config';
     JwtStrategy,
     AdminLocalStrategy,
     CustomerLocalStrategy,
+    JwtAuthGuard,
+    AdminGuard,
+    AdminOnlyGuard,
   ],
-  exports: [AuthService],
+  exports: [JwtAuthGuard, AdminGuard, AdminOnlyGuard, JwtModule],
 })
 export class AuthModule {}

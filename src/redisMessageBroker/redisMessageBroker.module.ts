@@ -14,6 +14,7 @@ import { RedisMessageBrokerService } from './redisMessageBroker.service';
           options: {
             host: configService.get<string>('REDIS_HOST'),
             port: configService.get<number>('REDIS_PORT'),
+            db: 1,
           },
         }),
       },

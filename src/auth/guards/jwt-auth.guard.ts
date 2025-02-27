@@ -4,17 +4,15 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { RedisService } from 'src/redisCache/redisCache.service';
+import { RedisCacheService } from 'src/redisCache/redisCache.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private reflector: Reflector,
-    private redisService: RedisService
+    private redisService: RedisCacheService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

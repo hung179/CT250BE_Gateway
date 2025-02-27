@@ -15,7 +15,7 @@ import { AdminGuard } from 'src/auth/guards/admin-guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('order')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
   @Post()
@@ -45,5 +45,10 @@ export class OrderController {
   @Get('user/:id')
   async getUserOrders(@Param('id') idUser: string) {
     return this.orderService.findUserOrders(idUser);
+  }
+
+  @Get('test/:id')
+  async test(@Param('id') data: string) {
+    return this.orderService.test(data);
   }
 }

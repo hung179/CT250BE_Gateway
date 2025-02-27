@@ -25,5 +25,6 @@ import { ReviewModule } from './microservices/review/review.module';
   ],
   controllers: [],
   providers: [],
+  exports: [],
 })
 export class AppModule {}

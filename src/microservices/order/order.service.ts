@@ -62,4 +62,11 @@ export class OrderService {
       idUser
     );
   }
+
+  async test(data: string) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'order_test',
+      data
+    );
+  }
 }
