@@ -1,11 +1,9 @@
 import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CustomerLocalAuthGuard } from './guards/customer_local-auth.guard';
 import { AdminLocalAuthGuard } from './guards/admin_local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { AdminOnlyGuard } from './guards/admin-only.guard';
 
 @Controller('auth')
 export class AuthController {

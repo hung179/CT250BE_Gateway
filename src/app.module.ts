@@ -8,6 +8,7 @@ import { AdminModule } from './microservices/admin/admin.module';
 import { CategoryModule } from './microservices/category/category.module';
 import { ProductPromotionModule } from './microservices/promotion/product.promotion/product.promotion.module';
 import { BillPromotionModule } from './microservices/promotion/bill.promotion/bill.promotion.module';
+import { ReviewModule } from './microservices/review/review.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BillPromotionModule } from './microservices/promotion/bill.promotion/bi
     CategoryModule,
     ProductPromotionModule,
     BillPromotionModule,
+    ReviewModule,
   ],
   controllers: [],
   providers: [],
