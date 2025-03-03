@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Get,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CustomerLocalAuthGuard } from './guards/customer_local-auth.guard';
@@ -11,36 +20,56 @@ export class AuthController {
 
   @Post('customer-login')
   @UseGuards(CustomerLocalAuthGuard)
-  async customerLogin(@Req() req) {
-    return this.authService.login(req.user, 'customer');
+  async customerLogin(@Req() req, @Res() res: Response) {
+    try {
+      const { accessToken, refreshToken } = await this.authService.login(
+        req.user,
+        'customer'
+      );
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+      });
+      return res.json({ success: true, data: accessToken });
+    } catch (error) {
+      return res.json({ success: false, error: error });
+    }
   }
 
   @Post('admin-login')
   @UseGuards(AdminLocalAuthGuard)
-  async adminLogin(@Req() req) {
-    return this.authService.login(req.user, 'admin');
+  async adminLogin(@Req() req, @Res() res: Response) {
+    try {
+      const { accessToken, refreshToken } = await this.authService.login(
+        req.user,
+        'admin'
+      );
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+      });
+      return res.json({ success: true, data: accessToken });
+    } catch (error) {
+      return res.json({ success: false, error: error });
+    }
   }
 
-  @Post('refresh-accesstoken')
-  async refreshAccessToken(
-    @Body() refreshTokenDto: RefreshTokenDto
-  ): Promise<any> {
-    return await this.authService.refreshAccessToken(
-      refreshTokenDto.refreshToken
-    );
+  @Get('refresh-accesstoken')
+  async refreshAccessToken(@Req() req, @Res() res: Response): Promise<any> {
+    const refreshToken = req.cookies?.refreshToken;
+    return res.json(await this.authService.refreshAccessToken(refreshToken));
   }
 
-  @Post('logout')
+  @Get('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(
-    @Req() req,
-    @Body('refreshToken') refreshTokenDto: RefreshTokenDto
-  ) {
+  async logout(@Req() req, @Res() res: Response) {
     const accessToken = req.headers.authorization.split(' ')[1];
-    return this.authService.logout(
-      req.user.userId,
-      accessToken,
-      refreshTokenDto.refreshToken
-    );
+    const refreshToken = req.cookies?.refreshToken;
+
+    return res.json(await this.authService.logout(accessToken, refreshToken));
   }
 }

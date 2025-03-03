@@ -15,14 +15,13 @@ export class AuthService {
 
   // Đăng nhập và tạo accessToken + refreshToken
   async login(user: any, userType: 'admin' | 'customer') {
-    const payload = { userId: user._id };
+    const payload = { userId: user.userId };
     if (userType === 'admin') {
       payload['role'] = user.role;
     }
-
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: '1h',
+      expiresIn: '15m',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -31,8 +30,8 @@ export class AuthService {
     });
 
     await this.redisCacheService.set(
-      `refresh_token:${user._id}`,
-      refreshToken,
+      `refresh_token:${refreshToken}`,
+      user.userId,
       7 * 24 * 60 * 60
     );
 
@@ -87,39 +86,44 @@ export class AuthService {
       });
 
       const userId = payload.userId;
-
       // 🛠 Kiểm tra refreshToken trong Redis
-      const tokenKey = `refresh_token:${userId}:${refreshToken}`;
-      const isValid = await this.redisCacheService.get(tokenKey);
+      const tokenKey = `refresh_token:${refreshToken}`;
+      const userIdInCache = await this.redisCacheService.get(tokenKey);
+      const isValid = userIdInCache === userId;
+      console.log(payload, isValid, userIdInCache);
       if (!isValid) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      // 🔑 Tạo accessToken mới
+      // // 🔑 Tạo accessToken mới
       const newAccessToken = this.jwtService.sign(
         { userId: payload.userId, role: payload.role },
         {
           secret: process.env.JWT_SECRET,
-          expiresIn: '1h',
+          expiresIn: '15m',
         }
       );
 
-      return { accessToken: newAccessToken };
+      return { sucesss: true, data: { accessToken: newAccessToken } };
     } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token');
+      return { success: false, error: error };
     }
   }
 
-  async logout(userId: string, accessToken: string, refreshToken: string) {
-    const tokenKey = `refresh_token:${userId}:${refreshToken}`;
-    await this.redisCacheService.del(tokenKey);
+  async logout(accessToken: string, refreshToken: string) {
+    try {
+      const tokenKey = `refresh_token:${refreshToken}`;
+      await this.redisCacheService.del(tokenKey);
 
-    const accessTokenExpireTime = 60 * 60; // 1 giờ (hoặc thời gian hết hạn của token)
-    await this.redisCacheService.set(
-      `blacklist_token:${accessToken}`,
-      'blacklisted',
-      accessTokenExpireTime
-    );
-    return { message: 'Logout successful' };
+      const accessTokenExpireTime = 60 * 60; // 1 giờ (hoặc thời gian hết hạn của token)
+      await this.redisCacheService.set(
+        `blacklist_token:${accessToken}`,
+        'blacklisted',
+        accessTokenExpireTime
+      );
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error };
+    }
   }
 }

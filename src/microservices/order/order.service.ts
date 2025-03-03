@@ -64,9 +64,6 @@ export class OrderService {
   }
 
   async test(data: string) {
-    return await this.redisMessageBrokerService.requestResponse(
-      'order_test',
-      data
-    );
+    return await this.redisMessageBrokerService.requestResponse('user', data);
   }
 }

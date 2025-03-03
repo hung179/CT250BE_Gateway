@@ -18,4 +18,24 @@ export class RedisCacheService {
   async del(key: string) {
     await this.redisClient.del(key);
   }
+
+  async sadd(tokenKey: string, refreshToken: string) {
+    return await this.redisClient.sadd(tokenKey, refreshToken);
+  }
+
+  async sismember(tokenKey: string, refreshToken: string) {
+    return await this.redisClient.sismember(tokenKey, refreshToken);
+  }
+
+  async srem(tokenKey: string, refreshToken: string) {
+    return await this.redisClient.srem(tokenKey, refreshToken);
+  }
+
+  async expire(tokenKey: string, arg1: number) {
+    return await this.redisClient.expire(tokenKey, arg1);
+  }
+
+  async setex(tokenKey: string, arg1: number, userId: any) {
+    return await this.redisClient.setex(tokenKey, arg1, userId);
+  }
 }
