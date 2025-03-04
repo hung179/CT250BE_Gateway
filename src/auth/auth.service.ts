@@ -96,7 +96,7 @@ export class AuthService {
       }
 
       // // 🔑 Tạo accessToken mới
-      const newAccessToken = this.jwtService.sign(
+      const accessToken = this.jwtService.sign(
         { userId: payload.userId, role: payload.role },
         {
           secret: process.env.JWT_SECRET,
@@ -104,26 +104,23 @@ export class AuthService {
         }
       );
 
-      return { sucesss: true, data: { accessToken: newAccessToken } };
+      return {
+        accessToken,
+        userId,
+      };
     } catch (error) {
-      return { success: false, error: error };
+      console.log(error);
+      return { error };
     }
   }
 
-  async logout(accessToken: string, refreshToken: string) {
+  async logout(refreshToken: string) {
     try {
       const tokenKey = `refresh_token:${refreshToken}`;
       await this.redisCacheService.del(tokenKey);
-
-      const accessTokenExpireTime = 60 * 60; // 1 giờ (hoặc thời gian hết hạn của token)
-      await this.redisCacheService.set(
-        `blacklist_token:${accessToken}`,
-        'blacklisted',
-        accessTokenExpireTime
-      );
-      return { success: true };
+      return;
     } catch (error) {
-      return { success: false, error: error };
+      return { error };
     }
   }
 }
