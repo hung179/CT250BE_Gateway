@@ -6,7 +6,6 @@ import {
   IsOptional,
   ValidateNested,
   IsNotEmpty,
-  IsMongoId,
   IsBoolean,
   MaxLength,
   MinLength,
@@ -17,33 +16,29 @@ import { Transform, Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 
 class TTChiTietSPDto {
-  @IsMongoId()
-  thuocTinh_CTSP!: string;
+  @IsString()
+  thuocTinh_CTSP: string;
 
   @IsString()
-  giaTri_CTSP!: string;
+  @Transform(({ value }) =>
+    value !== null && value !== undefined ? String(value) : ''
+  )
+  giaTri_CTSP: string;
 }
 
 class TuyChonPLDto {
   @IsString()
   ten_TC!: string;
-
-  @IsBoolean()
-  anh_TC?: boolean;
 }
 
 class PhanLoaiSPDto {
   @IsString()
   ten_PL!: string;
 
-  @IsString()
-  cap_PL!: number;
-
   @IsArray()
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )
-  @ValidateNested({ each: true })
   @Type(() => TuyChonPLDto)
   tuyChon_PL!: TuyChonPLDto[];
 }
@@ -62,9 +57,6 @@ class TTBanHangSPDto {
   @Min(1)
   @Max(999999)
   trongLuong_BH!: number;
-
-  @IsString()
-  kichThuoc_BH!: string;
 
   @Min(1000)
   @Max(120000000)
@@ -86,7 +78,7 @@ export class CreateProductDto {
   @MinLength(10)
   ten_SP!: string;
 
-  @IsMongoId()
+  @IsString()
   @IsNotEmpty()
   nganhHang_SP!: string;
 
@@ -100,7 +92,6 @@ export class CreateProductDto {
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )
-  @ValidateNested({ each: true })
   @Type(() => TTChiTietSPDto)
   ttChiTiet_SP!: TTChiTietSPDto[];
 
@@ -109,16 +100,14 @@ export class CreateProductDto {
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )
-  @ValidateNested({ each: true })
   @Type(() => TTBanHangSPDto)
-  ttBanHang_SP?: TTBanHangSPDto[];
+  ttBanHang_SP!: TTBanHangSPDto[];
 
   @IsOptional()
   @IsArray()
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )
-  @ValidateNested({ each: true })
   @Type(() => PhanLoaiSPDto)
   phanLoai_SP?: PhanLoaiSPDto[];
 }
@@ -129,28 +118,7 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )
-  ttAnhCapNhat_SP?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value
-  )
-  ttAnhCapNhat_TC?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value
-  )
   ttAnhXoa_SP?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value
-  )
-  ttAnhXoa_TC?: string[];
 
   @IsOptional()
   @IsBoolean()

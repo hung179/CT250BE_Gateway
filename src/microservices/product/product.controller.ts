@@ -16,38 +16,33 @@ import { ProductService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './product.dto';
 import { AdminGuard } from 'src/auth/guards/admin-guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-@Controller('product')
+@Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @Post()
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  //@UseGuards(JwtAuthGuard, AdminGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'anhBia_SP', maxCount: 1 }, // Ảnh bìa (chỉ 1 ảnh)
-      { name: 'anh_SP', maxCount: 9 }, // Nhận tối đa 4 ảnh sản phẩm
-      { name: 'anh_TC', maxCount: 10 }, // Nhận tối đa 10 ảnh tùy chọn
+      { name: 'fileAnhBia_SP', maxCount: 1 }, // Ảnh bìa (chỉ 1 ảnh)
+      { name: 'fileAnh_SP', maxCount: 10 }, // Nhận tối đa 4 ảnh sản phẩm
     ])
   )
   async createProduct(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles()
     files: {
-      anhBia_SP?: Express.Multer.File[];
-      anh_SP?: Express.Multer.File[];
-      anh_TC?: Express.Multer.File[];
+      fileAnhBia_SP?: Express.Multer.File[];
+      fileAnh_SP?: Express.Multer.File[];
     }
   ) {
     return this.productService.createProduct(createProductDto, files);
   }
   @Put(':id')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  //@UseGuards(JwtAuthGuard, AdminGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'anhBiaCapNhat_SP', maxCount: 1 },
-      { name: 'anhMoi_SP', maxCount: 9 },
-      { name: 'anhMoi_TC', maxCount: 10 },
-      { name: 'anhCapNhat_SP', maxCount: 4 },
-      { name: 'anhCapNhat_TC', maxCount: 10 },
+      { name: 'fileAnhBia_SP', maxCount: 1 }, // Ảnh bìa (chỉ 1 ảnh)
+      { name: 'fileAnh_SP', maxCount: 10 }, // Nhận tối đa 4 ảnh sản phẩm
     ])
   )
   async updateProduct(
@@ -55,17 +50,15 @@ export class ProductController {
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFiles()
     files: {
-      anhBiaCapNhat_SP?: Express.Multer.File[];
-      anhMoi_SP?: Express.Multer.File[];
-      anhMoi_TC?: Express.Multer.File[];
-      anhCapNhat_SP?: Express.Multer.File[];
-      anhCapNhat_TC?: Express.Multer.File[];
+      fileAnhBia_SP?: Express.Multer.File[];
+      fileAnh_SP?: Express.Multer.File[];
     }
   ) {
+    console.log(updateProductDto, files);
     return this.productService.updateProduct(id, updateProductDto, files);
   }
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  //@UseGuards(JwtAuthGuard, AdminGuard)
   async deleteProduct(@Param('id') id: string) {
     return this.productService.deleteProduct(id);
   }
@@ -74,20 +67,58 @@ export class ProductController {
   async getSalesInf(@Param('id') idSalesInf: string) {
     return this.productService.getProductSalesInf(idSalesInf);
   }
+
+  @Get('all')
+  async getAll(
+    @Query('limit') limit: string = '12',
+    @Query('page') page: string = '0',
+    @Query('state') state: string = '1'
+  ) {
+    const data = {
+      limit: parseInt(limit, 10) || 12, // Nếu không hợp lệ, gán giá trị mặc định
+      page: parseInt(page, 10) ?? 0,
+      state: parseInt(state, 10) ?? 1,
+    };
+    console.log(state, data.state);
+    return this.productService.getAllProduct(data);
+  }
+
   @Post('sale-inf')
   @UseGuards(JwtAuthGuard)
   async getMultipleSalesInf(@Body('idSalesInf') idSalesInf: string[]) {
     return this.productService.getMultipleProductSalesInf(idSalesInf);
   }
   @Get(':id')
+  async getProductID(@Param('id') id: string) {
+    const data = { id };
+    console.log(data);
+    return this.productService.productDetail(data);
+  }
+
+  @Get('')
   async getProduct(
-    @Param('id') id: string,
-    @Query('searchKey') searchKey: string,
-    @Query('code') code: number,
-    @Query('l') limit: number = 12,
-    @Query('p') page: number = 0
+    @Query('searchKey') searchKey?: string,
+    @Query('code') code?: string,
+    @Query('category') category?: string,
+    @Query('limit') limit: string = '12',
+    @Query('page') page: string = '0',
+    @Query('state') state: string = '1'
   ) {
-    const data = { id, searchKey, code, limit, page };
+    const data = {
+      searchKey,
+      code: code ? Number(code) : undefined, // Chỉ ép kiểu nếu có giá trị
+      category,
+      limit: parseInt(limit, 10) || 12, // Nếu không hợp lệ, gán giá trị mặc định
+      page: parseInt(page, 10) ?? 0,
+      state: parseInt(state, 10) ?? 1,
+    };
     return this.productService.searchProduct(data);
+  }
+
+  @Put('state/:id')
+  async updateState(@Param('id') id: string, @Body() body: { state: boolean }) {
+    const state = body.state;
+    console.log(this.productService.updateState({ id, state }));
+    return this.productService.updateState({ id, state });
   }
 }

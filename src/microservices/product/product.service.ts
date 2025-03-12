@@ -12,14 +12,27 @@ export class ProductService {
   async createProduct(
     createProductDto: CreateProductDto,
     files: {
-      anhBia_SP?: Express.Multer.File[];
-      anh_SP?: Express.Multer.File[];
-      anh_TC?: Express.Multer.File[];
+      fileAnhBia_SP?: Express.Multer.File[];
+      fileAnh_SP?: Express.Multer.File[];
     }
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  ): Promise<{ success: boolean; data?: any; error?: any }> {
+    const convertFile = (file?: Express.Multer.File[]) =>
+      file?.map((f) => ({
+        originalname: f.originalname,
+        mimetype: f.mimetype,
+        buffer: f.buffer.toString('base64'), // Chuyển thành base64
+      })) || [];
+
+    const payload = {
+      createProductDto,
+      files: {
+        fileAnhBia_SP: convertFile(files.fileAnhBia_SP)?.[0] || null, // Chỉ lấy 1 ảnh bìa
+        fileAnh_SP: convertFile(files.fileAnh_SP),
+      },
+    };
     return await this.redisMessageBrokerService.requestResponse(
       'product_create',
-      { createProductDto, files }
+      payload
     );
   }
 
@@ -27,22 +40,34 @@ export class ProductService {
     id: string,
     updateProductDto: UpdateProductDto,
     files: {
-      anhBiaCapNhat_SP?: Express.Multer.File[];
-      anhMoi_SP?: Express.Multer.File[];
-      anhMoi_TC?: Express.Multer.File[];
-      anhCapNhat_SP?: Express.Multer.File[];
-      anhCapNhat_TC?: Express.Multer.File[];
+      fileAnhBia_SP?: Express.Multer.File[];
+      fileAnh_SP?: Express.Multer.File[];
     }
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  ): Promise<{ success: boolean; data?: any; error?: any }> {
+    const convertFile = (file?: Express.Multer.File[]) =>
+      file?.map((f) => ({
+        originalname: f.originalname,
+        mimetype: f.mimetype,
+        buffer: f.buffer.toString('base64'), // Chuyển thành base64
+      })) || [];
+
+    const payload = {
+      id,
+      updateProductDto,
+      files: {
+        fileAnhBia_SP: convertFile(files.fileAnhBia_SP)?.[0] || null, // Chỉ lấy 1 ảnh bìa
+        fileAnh_SP: convertFile(files.fileAnh_SP),
+      },
+    };
     return await this.redisMessageBrokerService.requestResponse(
       'product_update',
-      { id, updateProductDto, files }
+      payload
     );
   }
 
   async deleteProduct(
     id: string
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  ): Promise<{ success: boolean; data?: any; error?: any }> {
     return await this.redisMessageBrokerService.requestResponse(
       'product_delete',
       id
@@ -51,7 +76,7 @@ export class ProductService {
 
   async getProductSalesInf(
     idSalesInf: string
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  ): Promise<{ success: boolean; data?: any; error?: any }> {
     return await this.redisMessageBrokerService.requestResponse(
       'product_get-sale-info',
       idSalesInf
@@ -60,23 +85,54 @@ export class ProductService {
 
   async getMultipleProductSalesInf(
     idSalesInf: string[]
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  ): Promise<{ success: boolean; data?: any; error?: any }> {
     return await this.redisMessageBrokerService.requestResponse(
       'product_get-multiple-sale-info',
       idSalesInf
     );
   }
 
-  async searchProduct(data: {
-    id?: string;
+  async searchProduct(payload: {
     searchKey?: string;
+    category?: string;
     code?: number;
     limit?: number;
     page?: number;
-  }): Promise<{ success: boolean; data?: any; error?: string }> {
+    state: number;
+  }): Promise<{ success: boolean; data?: any; error?: any }> {
     return await this.redisMessageBrokerService.requestResponse(
       'product_search',
-      data
+      payload
+    );
+  }
+
+  async productDetail(payload: {
+    id: string;
+  }): Promise<{ success: boolean; data?: any; error?: any }> {
+    return await this.redisMessageBrokerService.requestResponse(
+      'product_detail',
+      payload
+    );
+  }
+
+  async getAllProduct(payload: {
+    limit?: number;
+    page?: number;
+    state: number;
+  }): Promise<{ success: boolean; data?: any; error?: any }> {
+    return await this.redisMessageBrokerService.requestResponse(
+      'product_get-all',
+      payload
+    );
+  }
+
+  async updateState(payload: {
+    id: string;
+    state: boolean;
+  }): Promise<{ success: boolean; data?: any; error?: any }> {
+    return await this.redisMessageBrokerService.requestResponse(
+      'product_update-state',
+      payload
     );
   }
 }
