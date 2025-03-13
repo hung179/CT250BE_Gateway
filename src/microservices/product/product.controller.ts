@@ -91,7 +91,6 @@ export class ProductController {
   @Get(':id')
   async getProductID(@Param('id') id: string) {
     const data = { id };
-    console.log(data);
     return this.productService.productDetail(data);
   }
 
@@ -118,7 +117,6 @@ export class ProductController {
   @Put('state/:id')
   async updateState(@Param('id') id: string, @Body() body: { state: boolean }) {
     const state = body.state;
-    console.log(this.productService.updateState({ id, state }));
     return this.productService.updateState({ id, state });
   }
 }
