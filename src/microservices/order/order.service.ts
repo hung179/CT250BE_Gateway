@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RedisMessageBrokerService } from 'src/redisMessageBroker/redisMessageBroker.service';
-import { CreateHoaDonDto } from './order.dto';
+import { CreateDonHangDto } from './order.dto';
 
 @Injectable()
 export class OrderService {
@@ -9,7 +9,7 @@ export class OrderService {
   ) {}
 
   async create(
-    createHoaDonDto: CreateHoaDonDto
+    createHoaDonDto: CreateDonHangDto
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     return await this.redisMessageBrokerService.requestResponse(
       'order_create',
@@ -36,12 +36,14 @@ export class OrderService {
     );
   }
 
-  async findAll(
-    state: number = 0
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+  async findAll(payload: {
+    limit?: number;
+    page?: number;
+    state: number;
+  }): Promise<{ success: boolean; data?: any; error?: string }> {
     return await this.redisMessageBrokerService.requestResponse(
-      'order_find_all',
-      state
+      'order_find-all',
+      payload
     );
   }
 
@@ -49,7 +51,7 @@ export class OrderService {
     id: string
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     return await this.redisMessageBrokerService.requestResponse(
-      'order_find_one',
+      'order_find-one',
       id
     );
   }
@@ -58,12 +60,8 @@ export class OrderService {
     idUser: string
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     return await this.redisMessageBrokerService.requestResponse(
-      'order_find_user_orders',
+      'order_find-user-orders',
       idUser
     );
-  }
-
-  async test(data: string) {
-    return await this.redisMessageBrokerService.requestResponse('user', data);
   }
 }

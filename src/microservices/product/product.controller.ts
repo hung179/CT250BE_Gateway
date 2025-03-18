@@ -54,7 +54,6 @@ export class ProductController {
       fileAnh_SP?: Express.Multer.File[];
     }
   ) {
-    console.log(updateProductDto, files);
     return this.productService.updateProduct(id, updateProductDto, files);
   }
   @Delete(':id')
@@ -79,7 +78,6 @@ export class ProductController {
       page: parseInt(page, 10) ?? 0,
       state: parseInt(state, 10) ?? 1,
     };
-    console.log(state, data.state);
     return this.productService.getAllProduct(data);
   }
 

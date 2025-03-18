@@ -4,8 +4,8 @@ import {
   IsNumber,
   IsArray,
   IsOptional,
-  ValidateNested,
   IsNotEmpty,
+  IsMongoId,
   IsBoolean,
   MaxLength,
   MinLength,
@@ -16,19 +16,34 @@ import { Transform, Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 
 class TTChiTietSPDto {
-  @IsString()
-  thuocTinh_CTSP: string;
+  @IsMongoId()
+  @IsOptional()
+  thuocTinh_CTSP!: string;
 
   @IsString()
+  @IsOptional()
   @Transform(({ value }) =>
     value !== null && value !== undefined ? String(value) : ''
   )
-  giaTri_CTSP: string;
+  giaTri_CTSP!: string;
 }
 
 class TuyChonPLDto {
   @IsString()
   ten_TC!: string;
+}
+
+class NganhHangDto {
+  @IsString()
+  cap1_NH!: string;
+
+  @IsString()
+  @IsOptional()
+  cap2_NH!: string;
+
+  @IsString()
+  @IsOptional()
+  cap3_NH!: string;
 }
 
 class PhanLoaiSPDto {
@@ -45,18 +60,12 @@ class PhanLoaiSPDto {
 
 class TTBanHangSPDto {
   @IsOptional()
-  @IsString()
+  @IsNumber()
   tuyChonPhanLoai1_BH?: string;
 
   @IsOptional()
-  @IsString()
-  tuyChonPhanLoai2_BH?: string;
-
-  @Transform(({ value }) => (typeof value === 'string' ? Number(value) : value))
   @IsNumber()
-  @Min(1)
-  @Max(999999)
-  trongLuong_BH!: number;
+  tuyChonPhanLoai2_BH?: string;
 
   @Min(1000)
   @Max(120000000)
@@ -78,9 +87,12 @@ export class CreateProductDto {
   @MinLength(10)
   ten_SP!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  nganhHang_SP!: string;
+  @Type(() => NganhHangDto)
+  @Transform(({ value }) =>
+    typeof value === 'string' ? JSON.parse(value) : value
+  )
+  @Type(() => NganhHangDto)
+  nganhHang_SP!: NganhHangDto;
 
   @IsString()
   @IsNotEmpty()
@@ -89,6 +101,7 @@ export class CreateProductDto {
   moTa_SP!: string;
 
   @IsArray()
+  @IsOptional()
   @Transform(({ value }) =>
     typeof value === 'string' ? JSON.parse(value) : value
   )

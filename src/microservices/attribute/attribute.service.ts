@@ -1,40 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { RedisMessageBrokerService } from 'src/redisMessageBroker/redisMessageBroker.service';
-import { CategoryDto } from './category.dto';
+import { AttributeDto } from './attribute.dto';
 
 @Injectable()
-export class CategoryService {
+export class AttributeService {
   constructor(
     private readonly redisMessageBrokerService: RedisMessageBrokerService
   ) {}
-  async deleteCategory(id: string) {
+
+  async findAttributeAll() {
     return await this.redisMessageBrokerService.requestResponse(
-      'delete_product_category',
-      { id }
-    );
-  }
-  async updateCategory(category: CategoryDto, id: string) {
-    return await this.redisMessageBrokerService.requestResponse(
-      'update_product_category',
-      { category, id }
-    );
-  }
-  async findCategoryById(id: string) {
-    return await this.redisMessageBrokerService.requestResponse(
-      'get_product_category_by_id',
-      { id }
-    );
-  }
-  async createCategory(category: CategoryDto) {
-    return await this.redisMessageBrokerService.requestResponse(
-      'add_product_category',
-      category
-    );
-  }
-  async findAllCategories() {
-    return await this.redisMessageBrokerService.requestResponse(
-      'get_product_categories',
+      'attribute_get_all',
       {}
+    );
+  }
+  async deleteAttribute(id: string) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'attribute_delete',
+      { id }
+    );
+  }
+  async updateAttribute(attributeDto: AttributeDto, id: string) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'attribute_update',
+      {
+        attributeDto,
+        id,
+      }
+    );
+  }
+  async findAttributeById(id: string) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'attribute_get_by_id',
+      {
+        id,
+      }
+    );
+  }
+  async createAttribute(attributeDto: AttributeDto) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'attribute_create',
+      attributeDto
     );
   }
 }

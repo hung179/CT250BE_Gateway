@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateHoaDonDto } from './order.dto';
+import { CreateDonHangDto } from './order.dto';
 import { AdminGuard } from 'src/auth/guards/admin-guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -19,15 +19,18 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
   @Post()
-  async createOrder(@Body() createHoaDonDto: CreateHoaDonDto) {
+  async createOrder(@Body() createHoaDonDto: CreateDonHangDto) {
     return await this.orderService.create(createHoaDonDto);
   }
   @Put(':id')
   async updateStateOrder(
     @Param('id') idSanPham: string,
-    @Query('s') state: number
+    @Query('state') state: string
   ) {
-    return this.orderService.updateState(idSanPham, state);
+    const data = {
+      state: parseInt(state, 10) ?? 1,
+    };
+    return this.orderService.updateState(idSanPham, data.state);
   }
   @Delete(':id')
   @UseGuards(AdminGuard)
@@ -35,8 +38,17 @@ export class OrderController {
     return this.orderService.confirmCancel(idSanPham);
   }
   @Get()
-  async getAllOrders(@Query('s') state: number = 0) {
-    return this.orderService.findAll(state);
+  async getAllOrders(
+    @Query('limit') limit: string = '12',
+    @Query('page') page: string = '0',
+    @Query('state') state: string = '1'
+  ) {
+    const data = {
+      limit: parseInt(limit, 10) || 12, // Nếu không hợp lệ, gán giá trị mặc định
+      page: parseInt(page, 10) ?? 0,
+      state: parseInt(state, 10) ?? 1,
+    };
+    return this.orderService.findAll(data);
   }
   @Get(':id')
   async getOrder(@Param('id') idOrder: string) {
@@ -45,10 +57,5 @@ export class OrderController {
   @Get('user/:id')
   async getUserOrders(@Param('id') idUser: string) {
     return this.orderService.findUserOrders(idUser);
-  }
-
-  @Get('test/:id')
-  async test(@Param('id') data: string) {
-    return this.orderService.test(data);
   }
 }
