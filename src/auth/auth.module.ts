@@ -11,6 +11,10 @@ import { ConfigService } from '@nestjs/config';
 import { AdminGuard } from './guards/admin-guard';
 import { AdminOnlyGuard } from './guards/admin-only.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AdminModule } from 'src/microservices/admin/admin.module';
+import { CustomerModule } from 'src/microservices/customer/customer.module';
+import { EmailModule } from 'src/email/email.module';
+import { OtpModule } from 'src/otp/otp.module';
 
 @Module({
   imports: [
@@ -23,6 +27,10 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       }),
     }),
     RedisCacheModule,
+    AdminModule,
+    CustomerModule,
+    EmailModule,
+    OtpModule
   ],
   controllers: [AuthController],
   providers: [
@@ -32,7 +40,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
     CustomerLocalStrategy,
     JwtAuthGuard,
     AdminGuard,
-    AdminOnlyGuard,
+    AdminOnlyGuard
   ],
   exports: [JwtAuthGuard, AdminGuard, AdminOnlyGuard, JwtModule],
 })

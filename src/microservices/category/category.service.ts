@@ -4,6 +4,12 @@ import { CategoryDto } from './category.dto';
 
 @Injectable()
 export class CategoryService {
+  async findAllCategoriesByPage(page: number, limit: number) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'get_category_by_page',
+      { page, limit }
+    )
+  }
   constructor(
     private readonly redisMessageBrokerService: RedisMessageBrokerService
   ) {}

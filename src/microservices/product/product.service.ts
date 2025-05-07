@@ -8,6 +8,34 @@ export class ProductService {
   constructor(
     private readonly redisMessageBrokerService: RedisMessageBrokerService
   ) {}
+  async restock(
+    ttSanPham: {
+      idSanPham_CTDH: string;
+      idTTBanHang_CTDH: string;
+      tenSanPham_CTDH: string;
+      soLuong_CTDH: number;
+      giaMua_CTDH: number;
+    }[]
+  ) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'hoan_kho_san_pham',
+      ttSanPham
+    );
+  }
+  async reduceStock(
+    ttSanPham: {
+      idSanPham_CTDH: string;
+      idTTBanHang_CTDH: string;
+      tenSanPham_CTDH: string;
+      soLuong_CTDH: number;
+      giaMua_CTDH: number;
+    }[]
+  ) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'giam_kho_san_pham',
+      ttSanPham
+    );
+  }
 
   async createProduct(
     createProductDto: CreateProductDto,

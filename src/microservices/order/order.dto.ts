@@ -40,7 +40,7 @@ class TTNhanHangDto {
 
   @ValidateNested()
   @Type(() => DiaChiDto)
-  diaChi_NH: DiaChiDto;
+  diaChi_NH: DiaChiDto; 
 }
 
 export class CreateDonHangDto {

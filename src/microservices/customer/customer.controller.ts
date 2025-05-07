@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 
@@ -14,6 +15,11 @@ export class CustomerController {
   cartService: any;
   constructor(private readonly customerService: CustomerService) {}
 
+  
+  @Get('emailUser')
+  getUserByEmail(@Query() email: any) {
+    return this.customerService.findUserByEmail(email.email);
+  }
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.customerService.findUserById(id);
@@ -23,7 +29,6 @@ export class CustomerController {
   createUser(@Body() user: any) {
     return this.customerService.createUser(user);
   }
-
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() user: any) {
     return this.customerService.updateUser(user, id);
@@ -58,10 +63,11 @@ export class CustomerController {
   async removeFromCart(
     @Body()
     data: {
-      idKhachHang: string;
+      idKhachHang_GH: string;
       products: { idSanPham_GH: string; idTTBanHang_GH: string }[];
     }
   ) {
-    return this.customerService.removeFromCart(data.idKhachHang, data.products);
+    return this.customerService.removeFromCart(data.idKhachHang_GH, data.products);
   }
 }
+ 

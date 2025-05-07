@@ -12,9 +12,9 @@ export class OtpService {
   }
 
   // Lưu OTP vào Redis với TTL 60 giây
-  async storeOtp(email: string, otp: string): Promise<void> {
-    const otpKey = `otp:${email}`; // Định danh OTP dựa vào email
-    await this.redisCacheService.set(otpKey, otp, 60); // TTL 60 giây
+  async storeOtp(key: string, otp: string, expiresIn: number = 60): Promise<void> {
+    const otpKey = `otp:${key}`; 
+    await this.redisCacheService.set(otpKey, otp, expiresIn);
   }
 
   // Kiểm tra OTP đã được lưu và còn hiệu lực hay không

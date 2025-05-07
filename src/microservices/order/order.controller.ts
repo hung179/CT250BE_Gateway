@@ -19,7 +19,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
   @Post()
-  async createOrder(@Body() createHoaDonDto: CreateDonHangDto) {
+  async createOrder(@Body() createHoaDonDto: any) {
     return await this.orderService.create(createHoaDonDto);
   }
   @Put(':id')
@@ -33,7 +33,7 @@ export class OrderController {
     return this.orderService.updateState(idSanPham, data.state);
   }
   @Delete(':id')
-  @UseGuards(AdminGuard)
+  // @UseGuards(AdminGuard)
   async cancelOrder(@Param('id') idSanPham: string) {
     return this.orderService.confirmCancel(idSanPham);
   }
@@ -43,6 +43,7 @@ export class OrderController {
     @Query('page') page: string = '0',
     @Query('state') state: string = '1'
   ) {
+    // Dùng database bản thân để sử dụng dữ liệu
     const data = {
       limit: parseInt(limit, 10) || 12, // Nếu không hợp lệ, gán giá trị mặc định
       page: parseInt(page, 10) ?? 0,

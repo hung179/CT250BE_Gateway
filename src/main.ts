@@ -25,6 +25,6 @@ async function bootstrap() {
     });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await redisMicroservice.listen();
-  await app.listen(process.env.PORT ?? 3999);
+  await app.listen(process.env.PORT || 3999, '0.0.0.0');
 }
 bootstrap();

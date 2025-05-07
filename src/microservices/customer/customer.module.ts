@@ -6,8 +6,12 @@ import { RedisMessageBrokerService } from 'src/redisMessageBroker/redisMessageBr
 import { RedisCacheModule } from 'src/redisCache/redisCache.module';
 
 @Module({
-  imports: [RedisMessageBrokerModule, RedisCacheModule],
+  imports: [
+      RedisMessageBrokerModule,
+      RedisCacheModule
+  ],
   providers: [CustomerService],
   controllers: [CustomerController],
+  exports: [CustomerService] 
 })
-export class CustomerModule {}
+export class CustomerModule  {}

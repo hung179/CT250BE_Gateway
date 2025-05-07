@@ -17,13 +17,19 @@ export class CategoryController {
   async getProductCategory() {
     return this.categoryService.findAllCategories();
   }
-
+  @Get('byPage')
+  async getProductCategoryByPage(
+    @Param('page') page: number,
+    @Param('limit') limit: number
+  ) {
+    return this.categoryService.findAllCategoriesByPage(page, limit);
+  }
   @Post('')
   async addProductCategory(@Body() categoryDto: CategoryDto) {
     return this.categoryService.createCategory(categoryDto);
   }
 
-  @Get(':id')
+  @Get(':id') 
   async getProductCategoryById(@Param('id') id: string) {
     return this.categoryService.findCategoryById(id);
   }

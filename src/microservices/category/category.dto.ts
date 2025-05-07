@@ -1,6 +1,6 @@
 export class CategoryDto {
   ten_NH: string;
-  nganhHangCha_NH?: string;
-  ma_NH?: number;
+  idCha_NH?: string;
+  cap_NH?: number;
   dsThuocTinh_NH?: string[];
 }

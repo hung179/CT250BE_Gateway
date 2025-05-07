@@ -6,7 +6,12 @@ export class CustomerService {
   constructor(
     private readonly redisMessageBrokerService: RedisMessageBrokerService
   ) {}
-
+  async findUserByEmail(email: string) {
+    return await this.redisMessageBrokerService.requestResponse(
+      'get_user_by_email',
+      email,
+    );
+  }
   async findUserById(customerId: string) {
     return await this.redisMessageBrokerService.requestResponse(
       'get_user_by_id',

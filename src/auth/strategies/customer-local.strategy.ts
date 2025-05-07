@@ -9,11 +9,11 @@ export class CustomerLocalStrategy extends PassportStrategy(
   'customer-local'
 ) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'email' });
+    super({ usernameField: 'email_KH', passwordField: 'password_KH' });
   }
 
-  async validate(email: string, password: string): Promise<any> {
-    const user = await this.authService.validateCustomer(email, password);
+  async validate(email_KH: string, password_KH: string): Promise<any> {
+    const user = await this.authService.validateCustomer(email_KH, password_KH);
     if (!user) throw new UnauthorizedException('Invalid customer credentials');
     return user;
   }

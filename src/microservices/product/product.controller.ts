@@ -19,6 +19,30 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
+  @Post('/restock')
+  async restock( @Body() ttSanPham: {
+    idSanPham_CTDH: string;
+    idTTBanHang_CTDH: string;
+    tenSanPham_CTDH: string;
+    soLuong_CTDH: number;
+    giaMua_CTDH: number;
+  }[]){
+    console.log('ttSanPham', ttSanPham);
+    return this.productService.restock(ttSanPham);
+  } 
+  @Post('/reduce-stock')
+  async reduceStock(
+    @Body()
+    ttSanPham: {
+      idSanPham_CTDH: string; 
+      idTTBanHang_CTDH: string;
+      tenSanPham_CTDH: string;
+      soLuong_CTDH: number;
+      giaMua_CTDH: number;
+    }[] 
+  ){
+    return this.productService.reduceStock(ttSanPham);
+  }
   @Post()
   //@UseGuards(JwtAuthGuard, AdminGuard)
   @UseInterceptors(
@@ -28,9 +52,9 @@ export class ProductController {
     ])
   )
   async createProduct(
-    @Body() createProductDto: CreateProductDto,
+    @Body() createProductDto: CreateProductDto, 
     @UploadedFiles()
-    files: {
+    files: { 
       fileAnhBia_SP?: Express.Multer.File[];
       fileAnh_SP?: Express.Multer.File[];
     }
@@ -53,14 +77,14 @@ export class ProductController {
       fileAnhBia_SP?: Express.Multer.File[];
       fileAnh_SP?: Express.Multer.File[];
     }
-  ) {
+  ) { 
     return this.productService.updateProduct(id, updateProductDto, files);
   }
-  @Delete(':id')
+  @Delete(':id') 
   //@UseGuards(JwtAuthGuard, AdminGuard)
   async deleteProduct(@Param('id') id: string) {
     return this.productService.deleteProduct(id);
-  }
+  } 
   @Get('sale-inf/:id')
   @UseGuards(JwtAuthGuard)
   async getSalesInf(@Param('id') idSalesInf: string) {
@@ -114,7 +138,7 @@ export class ProductController {
 
   @Put('state/:id')
   async updateState(@Param('id') id: string, @Body() body: { state: boolean }) {
-    const state = body.state;
+    const state = body.state; 
     return this.productService.updateState({ id, state });
   }
 }

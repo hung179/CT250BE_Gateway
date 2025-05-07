@@ -1,15 +1,14 @@
+import { ShippingInformationController } from "./shipInfor.controller";
+import { ShippingInformationService } from "./shipInfor.service";
 import { Module } from "@nestjs/common";
 import { RedisCacheModule } from "src/redisCache/redisCache.module";
 import { RedisMessageBrokerModule } from "src/redisMessageBroker/redisMessageBroker.module";
-import { AdminController } from "./admin.controller";
-import { AdminService } from "./admin.service";
 
 @Module({
     imports: [RedisMessageBrokerModule,
         RedisCacheModule
     ],
-    controllers: [AdminController],
-    providers: [AdminService],
-    exports: [AdminService],
+    controllers: [ShippingInformationController],
+    providers: [ShippingInformationService]
 }) 
-export class AdminModule {}
+export class ShippingInformationModule {}

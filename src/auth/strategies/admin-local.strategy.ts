@@ -9,12 +9,12 @@ export class AdminLocalStrategy extends PassportStrategy(
   'admin-local'
 ) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'email' });
+    super({ usernameField: 'username_NS', passwordField: 'mk_NS' });
   }
 
-  async validate(email: string, password: string): Promise<any> {
-    const user = await this.authService.validateAdmin(email, password);
+  async validate(username_NS: string, mk_NS: string): Promise<any> {
+    const user = await this.authService.validateAdmin(username_NS, mk_NS);
     if (!user) throw new UnauthorizedException('Invalid admin credentials');
-    return user;
+    return user; 
   }
 }

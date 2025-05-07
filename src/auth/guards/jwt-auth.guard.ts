@@ -16,7 +16,7 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -34,7 +34,8 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      request.user = payload; // Gán user vào request để sử dụng trong controller
+      request.user = payload; 
+      // Gán user vào request để sử dụng trong controller
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');

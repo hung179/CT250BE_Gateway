@@ -10,6 +10,8 @@ import { ProductPromotionModule } from './microservices/promotion/product.promot
 import { BillPromotionModule } from './microservices/promotion/bill.promotion/bill.promotion.module';
 import { ReviewModule } from './microservices/review/review.module';
 import { AttributeModule } from './microservices/attribute/attribute.module';
+import { AddressModule } from './microservices/address/address.module';
+import { ShippingInformationModule } from './shippingInformation/shipInfor.module';
 
 @Module({
   imports: [
@@ -24,9 +26,11 @@ import { AttributeModule } from './microservices/attribute/attribute.module';
     BillPromotionModule,
     ReviewModule,
     AttributeModule,
+    AddressModule,
+    ShippingInformationModule
   ],
   controllers: [],
-  providers: [],
+  providers: [], 
   exports: [],
 })
 export class AppModule {}
